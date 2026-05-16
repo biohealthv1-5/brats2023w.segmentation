@@ -1,0 +1,17 @@
+{
+  "accuracy": 94.33,
+  "precision": 95.49,
+  "recall_sensitivity": 92.75,
+  "specificity": 95.83,
+  "f1_score": 94.1,
+  "auc_roc": 0.9832,
+  "ap_score": 0.9862,
+  "optimal_threshold": 0.6512,
+  "confusion_matrix": {
+    "TN": 12330,
+    "FP": 536,
+    "FN": 888,
+    "TP": 11361
+  },
+  "total_test_samples": 25115
+}
