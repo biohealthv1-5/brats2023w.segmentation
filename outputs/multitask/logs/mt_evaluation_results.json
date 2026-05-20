@@ -1,0 +1,21 @@
+{
+  "accuracy": 94.26,
+  "precision": 97.33,
+  "recall_sensitivity": 90.73,
+  "specificity": 97.63,
+  "f1_score": 93.91,
+  "auc_roc": 0.9824,
+  "optimal_threshold": 0.3847,
+  "confusion_matrix": {
+    "TN": 12561,
+    "FP": 305,
+    "FN": 1136,
+    "TP": 11113
+  },
+  "segmentation": {
+    "mean_dice": 0.7765,
+    "mean_iou": 0.7061,
+    "num_tumor_slices": 12244
+  },
+  "total_test_samples": 25115
+}

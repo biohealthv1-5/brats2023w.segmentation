@@ -1,0 +1,62 @@
+{
+  "patch_level": {
+    "accuracy": 91.58,
+    "precision": 66.73,
+    "recall": 93.02,
+    "specificity": 91.31,
+    "f1": 77.71,
+    "auc_roc": 0.9749,
+    "total_patches": 487656,
+    "cm": {
+      "TN": 375049,
+      "FP": 35673,
+      "FN": 5370,
+      "TP": 71564
+    }
+  },
+  "slice_level": {
+    "max": {
+      "accuracy": 84.41,
+      "precision": 79.6,
+      "recall": 91.48,
+      "specificity": 77.68,
+      "f1": 85.12,
+      "auc_roc": 0.9489,
+      "cm": {
+        "TN": 9993,
+        "FP": 2872,
+        "FN": 1044,
+        "TP": 11205
+      }
+    },
+    "mean": {
+      "accuracy": 64.55,
+      "precision": 95.69,
+      "recall": 28.61,
+      "specificity": 98.77,
+      "f1": 44.05,
+      "auc_roc": 0.9173,
+      "cm": {
+        "TN": 12707,
+        "FP": 158,
+        "FN": 8745,
+        "TP": 3504
+      }
+    },
+    "count": {
+      "accuracy": 87.07,
+      "precision": 84.93,
+      "recall": 89.34,
+      "specificity": 84.9,
+      "f1": 87.08,
+      "auc_roc": 0.9104,
+      "cm": {
+        "TN": 10923,
+        "FP": 1942,
+        "FN": 1306,
+        "TP": 10943
+      }
+    }
+  },
+  "best_aggregation": "count"
+}

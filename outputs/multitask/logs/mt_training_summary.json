@@ -1,0 +1,20 @@
+{
+  "total_time_minutes": 298.8,
+  "total_epochs": 14,
+  "best_val_loss": 0.3484,
+  "best_val_acc": 93.84,
+  "best_val_dice": 0.7564,
+  "config": {
+    "phase1_epochs": 3,
+    "phase1_lr": 0.001,
+    "phase2_epochs": 15,
+    "phase2_lr": 0.0001,
+    "batch_size": 16,
+    "weight_decay": 0.0001,
+    "num_workers": 0,
+    "early_stopping_patience": 5,
+    "alpha_cls": 1.0,
+    "beta_seg": 0.5,
+    "device": "cuda"
+  }
+}

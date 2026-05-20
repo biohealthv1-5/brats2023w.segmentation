@@ -1,4 +1,5 @@
 data/
-processed/slices/
-outputs/checkpoints/
+processed/
 notPublic/
+outputs/checkpoints/
+outputs/multitask/checkpoints/

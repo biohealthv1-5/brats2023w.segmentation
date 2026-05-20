@@ -1,0 +1,20 @@
+{
+  "whole_slice": {
+    "accuracy": 94.33,
+    "f1": 94.1,
+    "auc": 0.9832,
+    "fn": 888,
+    "fp": 536,
+    "gradcam_iou": 0.1448
+  },
+  "patch_based": {
+    "accuracy": 87.07,
+    "f1": 87.08,
+    "auc": 0.9104,
+    "fn": 1306,
+    "fp": 1942,
+    "gradcam_iou": 0.128,
+    "aggregation": "count"
+  },
+  "verdict": "현재 설정에서는 Whole-Slice가 우세. Patch 모델 추가 튜닝 필요"
+}

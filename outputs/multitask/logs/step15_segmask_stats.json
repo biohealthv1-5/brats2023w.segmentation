@@ -1,0 +1,8 @@
+{
+  "patients_processed": 1251,
+  "masks_saved": 166626,
+  "masks_with_tumor": 81374,
+  "masks_empty": 85252,
+  "skipped": 0,
+  "errors": 0
+}

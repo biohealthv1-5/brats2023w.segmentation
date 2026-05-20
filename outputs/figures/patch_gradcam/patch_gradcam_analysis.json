@@ -1,0 +1,7 @@
+{
+  "patch_tp_mean_iou": 0.128,
+  "tp_slices": 11205,
+  "fn_slices": 1044,
+  "fp_slices": 2872,
+  "samples_iou_computed": 200
+}
