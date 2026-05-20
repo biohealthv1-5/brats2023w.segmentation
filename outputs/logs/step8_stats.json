@@ -1,0 +1,30 @@
+{
+  "patients_processed": 1251,
+  "patients_skipped": 0,
+  "total_patches_extracted": 3218425,
+  "total_patches_filtered_brain": 2780111,
+  "positive_patches": 491108,
+  "negative_patches": 2727317,
+  "pos_neg_ratio": 0.1801,
+  "split_counts": {
+    "train": {
+      "pos": 340197,
+      "neg": 1908365
+    },
+    "val": {
+      "pos": 73977,
+      "neg": 408230
+    },
+    "test": {
+      "pos": 76934,
+      "neg": 410722
+    }
+  },
+  "settings": {
+    "patch_size": 64,
+    "stride": 32,
+    "tumor_threshold": 0.05,
+    "brain_threshold": 0.1
+  },
+  "errors": []
+}
