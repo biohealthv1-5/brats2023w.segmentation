@@ -92,52 +92,67 @@ biohealth_lv.1/
 ├── organize_data.py                   원본 zip → BraTS-GLI/training 정리 스크립트
 │
 ├── code/
-│   ├── step1_preprocess.py            Day 1: 3D NIfTI → 2D PNG 추출
-│   ├── step2_eda.py                   Day 1: EDA 시각화
-│   ├── step3_dataset.py               Day 1: 환자 단위 분할 + Dataset
-│   ├── step4_model.py                 Day 2: ResNet-18 정의
-│   ├── step5_train.py                 Day 2: 2-Phase 학습
-│   ├── step6_evaluate.py              Day 2: 테스트 평가
-│   ├── step7_gradcam.py               Day 3: Grad-CAM 해석성 분석
-│   ├── step8_patch_extract.py         Day 4: 패치 좌표 추출
-│   ├── step9_patch_dataset.py         Day 4: 패치 Dataset
-│   ├── step10_patch_model.py          Day 4: PatchCNN (95K params)
-│   ├── step11_patch_train.py          Day 4: 패치 학습
-│   ├── step12_patch_evaluate.py       Day 4: 패치 + 슬라이스 평가
-│   ├── step13_patch_gradcam.py        Day 4: 패치 Grad-CAM
-│   ├── step14_comparison.py           Day 4: Whole vs Patch 비교 자동 생성
-│   └── multitask/
-│       ├── step15_prep_segmask.py     Day 5: seg 마스크 준비
-│       ├── step16_multitask_dataset.py
-│       ├── step17_multitask_model.py  Day 5: ResNet-18 enc + U-Net dec
-│       ├── step18_multitask_train.py  Day 5: α·BCE(cls) + β·(Dice+BCE)(seg)
-│       └── step19_multitask_evaluate.py
+│   ├── whole/                         Day 1-3: Whole-Slice 파이프라인
+│   │   ├── step1_preprocess.py        3D NIfTI → 2D PNG 추출
+│   │   ├── step2_eda.py               EDA 시각화
+│   │   ├── step3_dataset.py           환자 단위 분할 + Dataset
+│   │   ├── step4_model.py             ResNet-18 정의
+│   │   ├── step5_train.py             2-Phase 학습
+│   │   ├── step6_evaluate.py          테스트 평가
+│   │   └── step7_gradcam.py           Grad-CAM 해석성 분석
+│   ├── patch/                         Day 4: Patch-Based 파이프라인
+│   │   ├── step8_patch_extract.py     패치 좌표 추출
+│   │   ├── step9_patch_dataset.py     패치 Dataset
+│   │   ├── step10_patch_model.py      PatchCNN (~95K params)
+│   │   ├── step11_patch_train.py      패치 학습
+│   │   ├── step12_patch_evaluate.py   패치 + 슬라이스 평가
+│   │   └── step13_patch_gradcam.py    패치 Grad-CAM
+│   ├── step14_comparison.py           Whole vs Patch 비교 자동 생성
+│   ├── multitask/                     Day 5: Multi-Task (Cls + Seg)
+│   │   ├── step15_prep_segmask.py
+│   │   ├── step16_multitask_dataset.py
+│   │   ├── step17_multitask_model.py  ResNet-18 enc + U-Net dec
+│   │   ├── step18_multitask_train.py  α·BCE(cls) + β·(Dice+BCE)(seg)
+│   │   └── step19_multitask_evaluate.py
+│   ├── mmmt/                          Day 6: Multi-Modal Multi-Task
+│   └── sota/                          확장 실험
 │
 ├── data/
 │   └── BraTS-GLI/training/            원본 NIfTI 1,251명
 │
-├── processed/
-│   ├── slices/                        166,626개 FLAIR PNG (224×224)
-│   ├── seg_masks/                     세분화 GT 마스크
+├── processed/                         (csv는 루트, 잘린 이미지는 하위 폴더)
 │   ├── labels.csv                     슬라이스별 종양 유무
 │   ├── splits.csv                     환자 단위 train/val/test
-│   └── patch_labels.csv               3,218,425개 패치 좌표
+│   ├── patch_labels.csv               3,218,425개 패치 좌표
+│   ├── slices/                        166,626개 FLAIR PNG (224×224)
+│   ├── seg_masks/                     세분화 GT 마스크 (WT)
+│   ├── mmmt/
+│   │   └── t1ce_slices/               Day 6 T1ce 슬라이스
+│   └── sota/
+│       ├── seg_masks_wt/
+│       ├── seg_masks_tc/
+│       └── seg_masks_et/
 │
-└── outputs/
+└── outputs/                           (결과물은 figures/logs/checkpoints로 분리)
     ├── checkpoints/
-    │   ├── best_model.pth             Whole-Slice ResNet-18 (134MB)
-    │   └── patch_best_model.pth       PatchCNN (0.4MB)
+    │   ├── whole/      best_model.pth, last_model.pth (~134MB)
+    │   ├── patch/      patch_best_model.pth (~0.4MB)
+    │   ├── multitask/  mt_best_model.pth (~170MB)
+    │   ├── mmmt/
+    │   └── sota/
     ├── figures/
-    │   ├── 01~10_*.png                EDA + Whole-Slice 학습/평가 시각화
-    │   ├── 11_patch_training_curves.png
-    │   ├── gradcam/                   Whole-Slice Grad-CAM 7종
-    │   ├── patch_eval/                패치 평가 시각화 8종
-    │   └── patch_gradcam/             패치 Grad-CAM 5종
-    ├── logs/                          학습/평가 JSON 로그
-    └── multitask/
-        ├── checkpoints/mt_best_model.pth  Multi-Task (~170MB)
-        ├── figures/                       MT 학습/CM/ROC/Seg 샘플
-        └── logs/                          mt_evaluation_results.json 등
+    │   ├── whole/      EDA 5종 + 학습/평가 시각화 5종 + gradcam/
+    │   ├── patch/      11_patch_training_curves.png + patch_eval/ + patch_gradcam/
+    │   ├── multitask/  MT 학습/CM/ROC/Seg 샘플
+    │   ├── mmmt/
+    │   └── sota/
+    └── logs/
+        ├── step14_comparison.json     Whole vs Patch 자동 비교 결과
+        ├── whole/      training_history.json, evaluation_results.json, ...
+        ├── patch/      step8_stats.json, step11_train_log.json, step12_patch_eval.json
+        ├── multitask/  mt_training_history.json, mt_evaluation_results.json, ...
+        ├── mmmt/
+        └── sota/
 ```
 
 ---
@@ -196,25 +211,25 @@ pip install torch torchvision nibabel pandas numpy scikit-learn matplotlib openc
 
 ```bash
 # Day 1: 전처리
-python code/step1_preprocess.py
-python code/step2_eda.py
-python code/step3_dataset.py
+python code/whole/step1_preprocess.py
+python code/whole/step2_eda.py
+python code/whole/step3_dataset.py
 
 # Day 2: Whole-Slice 학습 + 평가
-python code/step4_model.py
-python code/step5_train.py
-python code/step6_evaluate.py
+python code/whole/step4_model.py
+python code/whole/step5_train.py
+python code/whole/step6_evaluate.py
 
 # Day 3: Grad-CAM 해석성 분석
-python code/step7_gradcam.py
+python code/whole/step7_gradcam.py
 
 # Day 4: Patch-Based 파이프라인
-python code/step8_patch_extract.py
-python code/step9_patch_dataset.py
-python code/step10_patch_model.py
-python code/step11_patch_train.py
-python code/step12_patch_evaluate.py
-python code/step13_patch_gradcam.py
+python code/patch/step8_patch_extract.py
+python code/patch/step9_patch_dataset.py
+python code/patch/step10_patch_model.py
+python code/patch/step11_patch_train.py
+python code/patch/step12_patch_evaluate.py
+python code/patch/step13_patch_gradcam.py
 python code/step14_comparison.py
 
 # Day 5: Multi-Task Learning
@@ -223,6 +238,11 @@ python code/multitask/step16_multitask_dataset.py
 python code/multitask/step17_multitask_model.py
 python code/multitask/step18_multitask_train.py
 python code/multitask/step19_multitask_evaluate.py
+
+# Day 6: Multi-Modal Multi-Task
+python code/mmmt/step20_mmmt_preprocess.py
+python code/mmmt/step24_mmmt_train.py
+python code/mmmt/step25_mmmt_evaluate.py
 ```
 
 ---

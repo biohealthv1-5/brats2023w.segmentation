@@ -37,9 +37,9 @@ from step17_multitask_model import (
 
 # ─── 경로 설정 ───────────────────────────────────────────────
 PROJECT_DIR = Path(__file__).resolve().parent.parent.parent
-CHECKPOINT_DIR = PROJECT_DIR / "outputs" / "multitask" / "checkpoints"
-LOG_DIR = PROJECT_DIR / "outputs" / "multitask" / "logs"
-FIGURES_DIR = PROJECT_DIR / "outputs" / "multitask" / "figures"
+CHECKPOINT_DIR = PROJECT_DIR / "outputs" / "checkpoints" / "multitask"
+LOG_DIR = PROJECT_DIR / "outputs" / "logs" / "multitask"
+FIGURES_DIR = PROJECT_DIR / "outputs" / "figures" / "multitask"
 
 # ─── 하이퍼파라미터 ──────────────────────────────────────────
 CONFIG = {

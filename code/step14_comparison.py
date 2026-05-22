@@ -18,9 +18,11 @@ if sys.platform == "win32":
     sys.stderr.reconfigure(encoding="utf-8")
 
 PROJECT_DIR = Path(__file__).resolve().parent.parent
-LOG_DIR = PROJECT_DIR / "outputs" / "logs"
-GRADCAM_OLD = PROJECT_DIR / "outputs" / "figures" / "gradcam" / "gradcam_analysis.json"
-GRADCAM_NEW = PROJECT_DIR / "outputs" / "figures" / "patch_gradcam" / "patch_gradcam_analysis.json"
+LOG_DIR        = PROJECT_DIR / "outputs" / "logs"           # 통합 결과 JSON 출력용
+WHOLE_LOG_DIR  = LOG_DIR / "whole"
+PATCH_LOG_DIR  = LOG_DIR / "patch"
+GRADCAM_OLD = PROJECT_DIR / "outputs" / "figures" / "whole" / "gradcam" / "gradcam_analysis.json"
+GRADCAM_NEW = PROJECT_DIR / "outputs" / "figures" / "patch" / "patch_gradcam" / "patch_gradcam_analysis.json"
 
 
 def safe_load(path):
@@ -31,23 +33,24 @@ def safe_load(path):
 
 
 def main():
+    LOG_DIR.mkdir(parents=True, exist_ok=True)
     print("=" * 60)
     print("  Step 14: 최종 비교 보고서 생성")
     print("=" * 60)
 
     # ─── 데이터 로드 ─────────────────────────────────────────
-    ws_eval = safe_load(LOG_DIR / "evaluation_results.json")
-    ws_train = safe_load(LOG_DIR / "training_history.json")
-    pa_eval = safe_load(LOG_DIR / "step12_patch_eval.json")
-    pa_train = safe_load(LOG_DIR / "step11_train_log.json")
-    patch_stats = safe_load(LOG_DIR / "step8_stats.json")
+    ws_eval = safe_load(WHOLE_LOG_DIR / "evaluation_results.json")
+    ws_train = safe_load(WHOLE_LOG_DIR / "training_history.json")
+    pa_eval = safe_load(PATCH_LOG_DIR / "step12_patch_eval.json")
+    pa_train = safe_load(PATCH_LOG_DIR / "step11_train_log.json")
+    patch_stats = safe_load(PATCH_LOG_DIR / "step8_stats.json")
     gcam_old = safe_load(GRADCAM_OLD)
     gcam_new = safe_load(GRADCAM_NEW)
 
     if not ws_eval or not pa_eval:
         print("  [ERROR] 평가 결과 파일이 부족합니다.")
-        print(f"    whole-slice: {LOG_DIR / 'evaluation_results.json'} → {'있음' if ws_eval else '없음'}")
-        print(f"    patch:       {LOG_DIR / 'step12_patch_eval.json'} → {'있음' if pa_eval else '없음'}")
+        print(f"    whole-slice: {WHOLE_LOG_DIR / 'evaluation_results.json'} → {'있음' if ws_eval else '없음'}")
+        print(f"    patch:       {PATCH_LOG_DIR / 'step12_patch_eval.json'} → {'있음' if pa_eval else '없음'}")
         return
 
     # best 집계 방법
