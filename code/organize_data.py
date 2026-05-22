@@ -27,7 +27,8 @@ if sys.platform == "win32":
 
 # ─── 경로 설정 ───────────────────────────────────────────────
 SYNAPSE_CACHE = Path(os.path.expanduser("~")) / ".synapseCache"
-PROJECT_DIR = Path(__file__).resolve().parent
+# 이 스크립트가 code/ 아래로 이동되었으므로 .parent.parent 로 프로젝트 루트를 가리킨다
+PROJECT_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = PROJECT_DIR / "data"
 
 # ─── 캐시 내 파일 매핑 (Synapse ID 기반 폴더 → 파일명) ───────
