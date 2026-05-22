@@ -42,7 +42,8 @@ PROJECT_DIR = Path(__file__).resolve().parent.parent.parent
 CHECKPOINT = PROJECT_DIR / "outputs" / "checkpoints" / "patch" / "patch_best_model.pth"
 FIGURES_DIR = PROJECT_DIR / "outputs" / "figures" / "patch" / "patch_eval"
 LOG_DIR = PROJECT_DIR / "outputs" / "logs" / "patch"
-PREV_EVAL = LOG_DIR / "evaluation_results.json"   # whole-slice 결과
+WHOLE_LOG_DIR = PROJECT_DIR / "outputs" / "logs" / "whole"   # 카테고리별 분리: whole 결과는 별도 폴더
+PREV_EVAL = WHOLE_LOG_DIR / "evaluation_results.json"   # whole-slice 결과 (step6_evaluate.py 산출물)
 
 
 # ═══════════════════════════════════════════════════════════════

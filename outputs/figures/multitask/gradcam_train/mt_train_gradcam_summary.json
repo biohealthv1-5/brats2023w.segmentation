@@ -1,0 +1,17 @@
+{
+  "split": "train",
+  "checkpoint_epoch": 6,
+  "checkpoint_val_acc": 93.83891970098867,
+  "checkpoint_val_dice": 0.7563542055983237,
+  "n_train_total": 116629,
+  "TP": 52832,
+  "FN": 4110,
+  "FP": 427,
+  "TN": 59260,
+  "train_accuracy_pct": 96.1099,
+  "iou_subsample_n": 400,
+  "mean_iou_CAM_GT_trainTP": 0.1232,
+  "mean_iou_SEG_GT_trainTP": 0.7753,
+  "FN_prob_mean": 0.1823,
+  "FP_prob_mean": 0.7087
+}

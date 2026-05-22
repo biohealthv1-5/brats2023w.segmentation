@@ -1,0 +1,27 @@
+{
+  "total_minutes": 388.5,
+  "total_epochs": 16,
+  "final_val": {
+    "total": 0.2566093808213247,
+    "cls": 0.20252121039465404,
+    "seg": 0.10817634062951577,
+    "acc": 94.03183023872678,
+    "dice": 0.4262275399859931
+  },
+  "config": {
+    "phase1_epochs": 3,
+    "phase1_lr": 0.001,
+    "phase2_epochs": 15,
+    "phase2_lr": 0.0001,
+    "batch_size": 16,
+    "weight_decay": 0.0001,
+    "num_workers": 0,
+    "early_stopping_patience": 5,
+    "use_weighted_sampler": false,
+    "channel_mode": "t1ce_flair_diff",
+    "beta_seg": 0.5,
+    "tversky_alpha": 0.7,
+    "tversky_beta": 0.3,
+    "device": "cuda"
+  }
+}

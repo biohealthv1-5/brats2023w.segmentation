@@ -222,8 +222,8 @@ def main():
     L(f"| 모델 크기 | PatchCNN이 ~120배 작음 ✅ |")
     L(f"")
 
-    # 보고서 저장
-    md_path = PROJECT_DIR / "comparison_report.md"
+    # 보고서 저장 — outputs/logs/ 아래로 통일 (카테고리별 분리 일관성)
+    md_path = LOG_DIR / "comparison_report.md"
     with open(md_path, "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
     print(f"\n  ✓ Markdown 보고서: {md_path}")
