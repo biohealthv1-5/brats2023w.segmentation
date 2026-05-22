@@ -35,7 +35,7 @@ DATA_DIR = (
 SLICE_DIR = PROJECT_DIR / "processed" / "slices"              # 기존 슬라이스 (참조용)
 MASK_DIR = PROJECT_DIR / "processed" / "seg_masks"             # 새로 생성
 LABELS_CSV = PROJECT_DIR / "processed" / "labels.csv"
-LOG_DIR = PROJECT_DIR / "outputs" / "multitask" / "logs"
+LOG_DIR = PROJECT_DIR / "outputs" / "logs" / "multitask"
 
 # ─── 설정 ────────────────────────────────────────────────────
 MODALITY = "t2f"

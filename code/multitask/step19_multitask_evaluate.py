@@ -35,11 +35,12 @@ from step16_multitask_dataset import create_multitask_dataloaders
 from step17_multitask_model import create_multitask_model
 
 PROJECT_DIR = Path(__file__).resolve().parent.parent.parent
-CHECKPOINT_DIR = PROJECT_DIR / "outputs" / "multitask" / "checkpoints"
-FIGURES_DIR = PROJECT_DIR / "outputs" / "multitask" / "figures"
-LOG_DIR = PROJECT_DIR / "outputs" / "multitask" / "logs"
+CHECKPOINT_DIR = PROJECT_DIR / "outputs" / "checkpoints" / "multitask"
+FIGURES_DIR = PROJECT_DIR / "outputs" / "figures" / "multitask"
+LOG_DIR = PROJECT_DIR / "outputs" / "logs" / "multitask"
 # 기존 결과 참조 (읽기만)
-EXISTING_LOG_DIR = PROJECT_DIR / "outputs" / "logs"
+WHOLE_LOG_DIR = PROJECT_DIR / "outputs" / "logs" / "whole"   # 기존 Whole-Slice 평가 결과
+PATCH_LOG_DIR = PROJECT_DIR / "outputs" / "logs" / "patch"   # 기존 Patch 평가 결과
 
 
 @torch.no_grad()
@@ -166,8 +167,8 @@ def plot_segmentation_samples(images_list, masks_gt_list, masks_pred_list,
 def plot_3way_comparison(mt_results, save_path):
     """Whole-Slice vs Patch vs Multi-Task 3-way 비교 차트"""
     # 기존 결과 로드
-    ws_path = EXISTING_LOG_DIR / "evaluation_results.json"
-    patch_path = EXISTING_LOG_DIR / "step12_patch_eval.json"
+    ws_path = WHOLE_LOG_DIR / "evaluation_results.json"
+    patch_path = PATCH_LOG_DIR / "step12_patch_eval.json"
 
     ws, patch = {}, {}
     if ws_path.exists():
