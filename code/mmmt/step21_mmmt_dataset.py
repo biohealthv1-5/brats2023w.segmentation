@@ -61,9 +61,13 @@ class MMMTDataset(Dataset):
         """
         Args:
             channel_mode:
-                - 't1ce_flair_diff'  : [T1ce, FLAIR, |T1ce - FLAIR|]   (권장)
+                - 't1ce_flair_diff'  : [T1ce, FLAIR, |T1ce - FLAIR|]   (권장, Day 6 기본)
                 - 't1ce_flair_ratio' : [T1ce, FLAIR, T1ce/(FLAIR+eps)]
                 - 't1ce_flair_mul'   : [T1ce*FLAIR, T1ce, FLAIR]
+                - 't1ce_only'        : [T1ce, T1ce, T1ce]   (Phase 2 (C-1) ablation)
+                - 'flair_only'       : [FLAIR, FLAIR, FLAIR] (Phase 2 (C-2) ablation,
+                                       *Day 5 와 동일 코드 경로/loss/dataset 으로
+                                        통제된 FLAIR 단독 기여도 측정용*)
         """
         self.df = dataframe.reset_index(drop=True)
         self.flair_dir = Path(flair_dir)
@@ -90,6 +94,13 @@ class MMMTDataset(Dataset):
             c3 = np.clip(c3, 0.0, 1.0)
         elif self.channel_mode == "t1ce_flair_mul":
             return np.stack([t1ce_f * flair_f, t1ce_f, flair_f], axis=-1)
+        elif self.channel_mode == "t1ce_only":
+            # Phase 2 (C-1): T1ce 만 3 채널 복제. ImageNet conv1 가중치 그대로 활용.
+            return np.stack([t1ce_f, t1ce_f, t1ce_f], axis=-1)
+        elif self.channel_mode == "flair_only":
+            # Phase 2 (C-2): FLAIR 만 3 채널 복제. Day 5 MTL 과 동일 코드 경로/
+            # dataset/loss 로 통제 → "코드 차이"를 제외한 순수 모달 효과만 비교.
+            return np.stack([flair_f, flair_f, flair_f], axis=-1)
         else:
             raise ValueError(f"unknown channel_mode {self.channel_mode}")
         return np.stack([t1ce_f, flair_f, c3], axis=-1)

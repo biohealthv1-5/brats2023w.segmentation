@@ -3,3 +3,6 @@ processed/
 notPublic/
 outputs/checkpoints/
 outputs/multitask/checkpoints/
+.env
+run.ipynb
+.pdf

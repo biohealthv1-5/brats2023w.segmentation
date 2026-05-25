@@ -1,0 +1,35 @@
+{
+  "total_minutes": 1017.8,
+  "total_epochs": 14,
+  "final_val": {
+    "total": 2.596126380033139,
+    "cls": 0.263256296135122,
+    "seg": 1.081668046976152,
+    "acc": 92.40414757656137,
+    "dice_WT": 0.43140204943342286,
+    "dice_TC": 0.31210196960767933,
+    "dice_ET": 0.2917849277564319
+  },
+  "config": {
+    "phase1_epochs": 3,
+    "phase1_lr": 0.001,
+    "phase2_epochs": 15,
+    "phase2_lr": 0.0001,
+    "swa_start_epoch": 11,
+    "swa_lr": 5e-05,
+    "batch_size": 16,
+    "weight_decay": 0.0001,
+    "num_workers": 0,
+    "early_stopping_patience": 5,
+    "use_weighted_sampler": true,
+    "channel_mode": "t1ce_flair_diff",
+    "tumorcp_prob": 0.5,
+    "w_tv": 1.0,
+    "w_bce": 0.5,
+    "w_b": 0.3,
+    "tversky_alpha": 0.7,
+    "tversky_beta": 0.3,
+    "tversky_gamma": 1.3333333333333333,
+    "device": "cuda"
+  }
+}

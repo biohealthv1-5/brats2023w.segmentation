@@ -1,0 +1,117 @@
+{
+  "day5_optimal_thr": 0.3847,
+  "day6_default_thr": 0.5,
+  "rows": [
+    {
+      "name": "Day6 baseline [T1ce,FLAIR,|diff|]",
+      "mode": "t1ce_flair_diff",
+      "ckpt": "C:\\Users\\109so\\OneDrive\\Desktop\\학교\\biohealth_lv.1\\outputs\\checkpoints\\mmmt\\mmmt_best.pth",
+      "n_test": 25115,
+      "auroc": 0.9832,
+      "auprc": 0.9863,
+      "@0.5": {
+        "threshold": 0.5,
+        "tp": 11401,
+        "tn": 12327,
+        "fp": 539,
+        "fn": 848,
+        "precision": 95.49,
+        "recall": 93.08,
+        "f1": 94.27,
+        "accuracy": 94.48
+      },
+      "@0.3847": {
+        "threshold": 0.3847,
+        "tp": 11522,
+        "tn": 12079,
+        "fp": 787,
+        "fn": 727,
+        "precision": 93.61,
+        "recall": 94.06,
+        "f1": 93.84,
+        "accuracy": 93.97
+      },
+      "seg_wt": {
+        "n_positive_slices": 12244,
+        "dice_mean": 0.7874,
+        "dice_median": 0.9094,
+        "iou_mean": 0.7142,
+        "iou_median": 0.8338
+      }
+    },
+    {
+      "name": "Ablation C-1: T1ce-only",
+      "mode": "t1ce_only",
+      "ckpt": "C:\\Users\\109so\\OneDrive\\Desktop\\학교\\biohealth_lv.1\\outputs\\checkpoints\\mmmt_ablation\\t1ce_only\\best.pth",
+      "n_test": 25115,
+      "auroc": 0.9487,
+      "auprc": 0.9582,
+      "@0.5": {
+        "threshold": 0.5,
+        "tp": 10414,
+        "tn": 11739,
+        "fp": 1127,
+        "fn": 1835,
+        "precision": 90.23,
+        "recall": 85.02,
+        "f1": 87.55,
+        "accuracy": 88.21
+      },
+      "@0.3847": {
+        "threshold": 0.3847,
+        "tp": 10679,
+        "tn": 11163,
+        "fp": 1703,
+        "fn": 1570,
+        "precision": 86.25,
+        "recall": 87.18,
+        "f1": 86.71,
+        "accuracy": 86.97
+      },
+      "seg_wt": {
+        "n_positive_slices": 12244,
+        "dice_mean": 0.5741,
+        "dice_median": 0.7493,
+        "iou_mean": 0.478,
+        "iou_median": 0.5991
+      }
+    },
+    {
+      "name": "Ablation C-2: FLAIR-only",
+      "mode": "flair_only",
+      "ckpt": "C:\\Users\\109so\\OneDrive\\Desktop\\학교\\biohealth_lv.1\\outputs\\checkpoints\\mmmt_ablation\\flair_only\\best.pth",
+      "n_test": 25115,
+      "auroc": 0.9822,
+      "auprc": 0.9853,
+      "@0.5": {
+        "threshold": 0.5,
+        "tp": 11205,
+        "tn": 12518,
+        "fp": 348,
+        "fn": 1044,
+        "precision": 96.99,
+        "recall": 91.48,
+        "f1": 94.15,
+        "accuracy": 94.46
+      },
+      "@0.3847": {
+        "threshold": 0.3847,
+        "tp": 11359,
+        "tn": 12300,
+        "fp": 566,
+        "fn": 890,
+        "precision": 95.25,
+        "recall": 92.73,
+        "f1": 93.98,
+        "accuracy": 94.2
+      },
+      "seg_wt": {
+        "n_positive_slices": 12244,
+        "dice_mean": 0.7458,
+        "dice_median": 0.8943,
+        "iou_mean": 0.6703,
+        "iou_median": 0.8089
+      }
+    }
+  ]
+}
