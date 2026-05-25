@@ -1,0 +1,210 @@
+{
+  "n_test": 25115,
+  "n_positive": 12249,
+  "n_negative": 12866,
+  "thresholds": {
+    "day5": 0.3847,
+    "day6_fair": 0.3847,
+    "day6_default": 0.5
+  },
+  "metrics": {
+    "day5": {
+      "tp": 11227,
+      "tn": 12475,
+      "fp": 391,
+      "fn": 1022,
+      "precision": 96.63,
+      "recall": 91.66,
+      "f1": 94.08,
+      "accuracy": 94.37
+    },
+    "day6_fair@0.3847": {
+      "tp": 11522,
+      "tn": 12079,
+      "fp": 787,
+      "fn": 727,
+      "precision": 93.61,
+      "recall": 94.06,
+      "f1": 93.84,
+      "accuracy": 93.97
+    },
+    "day6_default@0.5": {
+      "tp": 11401,
+      "tn": 12327,
+      "fp": 539,
+      "fn": 848,
+      "precision": 95.49,
+      "recall": 93.08,
+      "f1": 94.27,
+      "accuracy": 94.48
+    }
+  },
+  "group_counts_fair": {
+    "cleaned_fp": 119,
+    "common_fp": 272,
+    "common_tn": 11960,
+    "common_tp": 11141,
+    "new_fp": 515,
+    "recovered": 381,
+    "regressed": 86,
+    "still_missed": 641
+  },
+  "group_counts_split": {
+    "cleaned_fp": 165,
+    "common_fp": 226,
+    "common_tn": 12162,
+    "common_tp": 11102,
+    "new_fp": 313,
+    "recovered": 299,
+    "regressed": 125,
+    "still_missed": 723
+  },
+  "group_stats_fair": {
+    "cleaned_fp": {
+      "n": 119,
+      "n_positive": 0,
+      "tumor_px_median": 0,
+      "tumor_px_mean": 0.0,
+      "z_median": 55,
+      "day5_prob_mean": 0.5959,
+      "day6_prob_mean": 0.1938
+    },
+    "common_fp": {
+      "n": 272,
+      "n_positive": 0,
+      "tumor_px_median": 0,
+      "tumor_px_mean": 0.0,
+      "z_median": 64,
+      "day5_prob_mean": 0.7125,
+      "day6_prob_mean": 0.7367
+    },
+    "common_tn": {
+      "n": 11960,
+      "n_positive": 0,
+      "tumor_px_median": 0,
+      "tumor_px_mean": 0.0,
+      "z_median": 39,
+      "day5_prob_mean": 0.0276,
+      "day6_prob_mean": 0.0582
+    },
+    "common_tp": {
+      "n": 11141,
+      "n_positive": 11141,
+      "tumor_px_median": 1343,
+      "tumor_px_mean": 1485.0,
+      "z_median": 85,
+      "day5_prob_mean": 0.9807,
+      "day6_prob_mean": 0.9864
+    },
+    "new_fp": {
+      "n": 515,
+      "n_positive": 0,
+      "tumor_px_median": 0,
+      "tumor_px_mean": 0.0,
+      "z_median": 69,
+      "day5_prob_mean": 0.1239,
+      "day6_prob_mean": 0.5788
+    },
+    "recovered": {
+      "n": 381,
+      "n_positive": 381,
+      "tumor_px_median": 109,
+      "tumor_px_mean": 230.9,
+      "z_median": 69,
+      "day5_prob_mean": 0.1706,
+      "day6_prob_mean": 0.699
+    },
+    "regressed": {
+      "n": 86,
+      "n_positive": 86,
+      "tumor_px_median": 98,
+      "tumor_px_mean": 222.3,
+      "z_median": 69,
+      "day5_prob_mean": 0.6511,
+      "day6_prob_mean": 0.2417
+    },
+    "still_missed": {
+      "n": 641,
+      "n_positive": 641,
+      "tumor_px_median": 31,
+      "tumor_px_mean": 99.6,
+      "z_median": 62,
+      "day5_prob_mean": 0.0827,
+      "day6_prob_mean": 0.1444
+    }
+  },
+  "group_stats_split": {
+    "cleaned_fp": {
+      "n": 165,
+      "n_positive": 0,
+      "tumor_px_median": 0,
+      "tumor_px_mean": 0.0,
+      "z_median": 55,
+      "day5_prob_mean": 0.5973,
+      "day6_prob_mean": 0.2629
+    },
+    "common_fp": {
+      "n": 226,
+      "n_positive": 0,
+      "tumor_px_median": 0,
+      "tumor_px_mean": 0.0,
+      "z_median": 68,
+      "day5_prob_mean": 0.7352,
+      "day6_prob_mean": 0.7967
+    },
+    "common_tn": {
+      "n": 12162,
+      "n_positive": 0,
+      "tumor_px_median": 0,
+      "tumor_px_mean": 0.0,
+      "z_median": 40,
+      "day5_prob_mean": 0.0289,
+      "day6_prob_mean": 0.0646
+    },
+    "common_tp": {
+      "n": 11102,
+      "n_positive": 11102,
+      "tumor_px_median": 1348,
+      "tumor_px_mean": 1489.7,
+      "z_median": 85,
+      "day5_prob_mean": 0.9818,
+      "day6_prob_mean": 0.9882
+    },
+    "new_fp": {
+      "n": 313,
+      "n_positive": 0,
+      "tumor_px_median": 0,
+      "tumor_px_mean": 0.0,
+      "z_median": 71,
+      "day5_prob_mean": 0.1364,
+      "day6_prob_mean": 0.6687
+    },
+    "recovered": {
+      "n": 299,
+      "n_positive": 299,
+      "tumor_px_median": 119,
+      "tumor_px_mean": 250.8,
+      "z_median": 69,
+      "day5_prob_mean": 0.1792,
+      "day6_prob_mean": 0.7703
+    },
+    "regressed": {
+      "n": 125,
+      "n_positive": 125,
+      "tumor_px_median": 77,
+      "tumor_px_mean": 202.1,
+      "z_median": 70,
+      "day5_prob_mean": 0.6617,
+      "day6_prob_mean": 0.3083
+    },
+    "still_missed": {
+      "n": 723,
+      "n_positive": 723,
+      "tumor_px_median": 36,
+      "tumor_px_mean": 106.2,
+      "z_median": 62,
+      "day5_prob_mean": 0.0891,
+      "day6_prob_mean": 0.1778
+    }
+  }
+}

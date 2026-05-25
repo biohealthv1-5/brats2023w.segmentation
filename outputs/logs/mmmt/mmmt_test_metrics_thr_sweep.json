@@ -1,0 +1,102 @@
+{
+  "n_test": 25115,
+  "auroc": 0.9832,
+  "auprc": 0.9863,
+  "day5_optimal_thr": 0.3847,
+  "day6_optimal_thr": 0.6202,
+  "threshold_sweep": [
+    {
+      "threshold": 0.3,
+      "tp": 11633,
+      "tn": 11790,
+      "fp": 1076,
+      "fn": 616,
+      "accuracy": 93.26,
+      "precision": 91.53,
+      "recall": 94.97,
+      "specificity": 91.64,
+      "f1": 93.22
+    },
+    {
+      "threshold": 0.35,
+      "tp": 11559,
+      "tn": 11975,
+      "fp": 891,
+      "fn": 690,
+      "accuracy": 93.7,
+      "precision": 92.84,
+      "recall": 94.37,
+      "specificity": 93.07,
+      "f1": 93.6
+    },
+    {
+      "threshold": 0.3847,
+      "tp": 11522,
+      "tn": 12079,
+      "fp": 787,
+      "fn": 727,
+      "accuracy": 93.97,
+      "precision": 93.61,
+      "recall": 94.06,
+      "specificity": 93.88,
+      "f1": 93.84
+    },
+    {
+      "threshold": 0.4,
+      "tp": 11508,
+      "tn": 12112,
+      "fp": 754,
+      "fn": 741,
+      "accuracy": 94.05,
+      "precision": 93.85,
+      "recall": 93.95,
+      "specificity": 94.14,
+      "f1": 93.9
+    },
+    {
+      "threshold": 0.45,
+      "tp": 11457,
+      "tn": 12226,
+      "fp": 640,
+      "fn": 792,
+      "accuracy": 94.3,
+      "precision": 94.71,
+      "recall": 93.53,
+      "specificity": 95.03,
+      "f1": 94.12
+    },
+    {
+      "threshold": 0.5,
+      "tp": 11401,
+      "tn": 12327,
+      "fp": 539,
+      "fn": 848,
+      "accuracy": 94.48,
+      "precision": 95.49,
+      "recall": 93.08,
+      "specificity": 95.81,
+      "f1": 94.27
+    }
+  ],
+  "seg_wt": {
+    "n_positive_slices": 12244,
+    "dice_mean": 0.7873818278312683,
+    "dice_median": 0.9093968868255615,
+    "iou_mean": 0.7141535878181458,
+    "iou_median": 0.8338477611541748
+  },
+  "day5_reference": {
+    "model": "Day5 MTL (FLAIR-only)",
+    "threshold": 0.3847,
+    "tp": 11113,
+    "tn": 12561,
+    "fp": 305,
+    "fn": 1136,
+    "accuracy": 94.26,
+    "precision": 97.33,
+    "recall": 90.73,
+    "specificity": 97.63,
+    "f1": 93.91,
+    "auc_roc": 0.9824
+  }
+}

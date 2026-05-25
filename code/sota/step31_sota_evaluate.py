@@ -321,7 +321,11 @@ def main():
 
     # ── 다중 비교 (Day5 MTL / Day6 MMMT / Day7 SOTA) ────
     print(f"\n  [Multi-way 비교]")
-    for tag, path in [("Day5 MTL (multitask)", MTL_PREV_LOG / "mt_test_metrics.json"),
+    # Day 5 결과 파일명은 실제로 `mt_evaluation_results.json` (구버전 호환을 위해 두 가지 모두 시도)
+    mtl_candidates = [MTL_PREV_LOG / "mt_test_metrics.json",
+                      MTL_PREV_LOG / "mt_evaluation_results.json"]
+    mtl_path = next((p for p in mtl_candidates if p.exists()), mtl_candidates[0])
+    for tag, path in [("Day5 MTL (multitask)", mtl_path),
                       ("Day6 MMMT (mmmt)", MMMT_PREV_LOG / "mmmt_test_metrics.json")]:
         if path.exists():
             try:

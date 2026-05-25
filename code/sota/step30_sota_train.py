@@ -16,6 +16,15 @@ v2ways.md §8.2 (Day 7 "무료 SOTA 패키지") 전면 적용:
 
 사용법:
     python code/sota/step30_sota_train.py
+
+[Resume 기능]
+- 매 epoch 끝에서 outputs/checkpoints/sota/sota_latest.pth 에
+  model / optimizer / scheduler / swa_model / history / phase / epoch 등
+  전체 상태를 원자적으로 저장한다.
+- 실행이 강제 종료되어도 동일 명령으로 다시 실행하면 latest 체크포인트를
+  자동 감지하여 동일 phase / 동일 epoch 다음 차례부터 이어서 학습한다.
+- 학습이 정상적으로 끝나면 latest 체크포인트는 자동 삭제되고,
+  sota_best.pth / sota_last.pth / sota_swa.pth 만 남는다.
 """
 
 import sys
@@ -46,6 +55,10 @@ PROJECT_DIR = Path(__file__).resolve().parent.parent.parent
 CKPT_DIR = PROJECT_DIR / "outputs" / "checkpoints" / "sota"
 LOG_DIR = PROJECT_DIR / "outputs" / "logs" / "sota"
 FIG_DIR = PROJECT_DIR / "outputs" / "figures" / "sota"
+
+# ─── Resume 체크포인트 경로 ───────────────────────────────────
+# 학습이 중단되어도 이 파일이 있으면 자동으로 이어서 진행한다.
+LATEST_CKPT = CKPT_DIR / "sota_latest.pth"
 
 # ─── 하이퍼파라미터 ──────────────────────────────────────────
 CONFIG = {
@@ -87,6 +100,22 @@ class EarlyStopping:
             self.best_loss = val_loss
             self.counter = 0
         return self.should_stop
+
+    def state_dict(self):
+        return {
+            "patience": self.patience,
+            "min_delta": self.min_delta,
+            "counter": self.counter,
+            "best_loss": self.best_loss,
+            "should_stop": self.should_stop,
+        }
+
+    def load_state_dict(self, sd):
+        self.patience = sd.get("patience", self.patience)
+        self.min_delta = sd.get("min_delta", self.min_delta)
+        self.counter = sd.get("counter", 0)
+        self.best_loss = sd.get("best_loss", None)
+        self.should_stop = sd.get("should_stop", False)
 
 
 @torch.no_grad()
@@ -205,13 +234,71 @@ def save_checkpoint(model, optimizer, epoch, metrics, filepath):
     }, filepath)
 
 
+def save_latest_checkpoint(filepath, *, phase, epoch, model, optimizer,
+                           scheduler, history, best_val_loss,
+                           early_stopping, swa_model=None,
+                           swa_scheduler=None):
+    """
+    매 epoch 끝에서 호출되는 'resume용' 체크포인트.
+    학습 중간에 프로세스가 죽어도 이 파일만 살아있으면
+    동일 phase / 동일 epoch 다음 차례부터 재개할 수 있다.
+
+    원자적 저장: <filepath>.tmp 로 저장 후 rename → 쓰는 도중 죽어도
+    기존 체크포인트가 망가지지 않는다.
+    """
+    payload = {
+        "phase": phase,                       # 1 or 2
+        "epoch": epoch,                       # 이번 phase에서 완료된 epoch 번호 (1-based)
+        "model_state_dict": model.state_dict(),
+        "optimizer_state_dict": optimizer.state_dict(),
+        "scheduler_state_dict":
+            scheduler.state_dict() if scheduler is not None else None,
+        "history": history,
+        "best_val_loss": best_val_loss,
+        "early_stopping": early_stopping.state_dict(),
+        "swa_model_state_dict":
+            swa_model.state_dict() if swa_model is not None else None,
+        "swa_scheduler_state_dict":
+            swa_scheduler.state_dict() if swa_scheduler is not None else None,
+        "config": {k: (str(v) if not isinstance(v, (int, float, str, bool))
+                       else v) for k, v in CONFIG.items()},
+    }
+    filepath = Path(filepath)
+    tmp = filepath.with_suffix(filepath.suffix + ".tmp")
+    torch.save(payload, tmp)
+    tmp.replace(filepath)
+
+
+def load_latest_checkpoint(filepath, device):
+    """latest 체크포인트가 있으면 dict 반환, 없으면 None."""
+    filepath = Path(filepath)
+    if not filepath.exists():
+        return None
+    try:
+        return torch.load(filepath, map_location=device, weights_only=False)
+    except TypeError:
+        # 구버전 torch (weights_only 인자 없음)
+        return torch.load(filepath, map_location=device)
+
+
 def train_phase(model, train_loader, val_loader, criterion, optimizer,
                 scheduler, device, n_epochs, phase_name,
                 early_stopping, history, swa_model=None,
-                swa_scheduler=None, swa_start=None):
-    best_val_loss = float("inf")
+                swa_scheduler=None, swa_start=None,
+                start_epoch=1, best_val_loss_init=float("inf"),
+                phase_id=None, latest_path=None):
+    """
+    start_epoch        : 이어서 시작할 1-based epoch 번호 (resume 용)
+    best_val_loss_init : resume 시 이전까지의 best val loss
+    phase_id           : 1 또는 2 (latest 체크포인트에 기록)
+    latest_path        : 매 epoch 끝에서 저장할 latest 체크포인트 경로
+    """
+    best_val_loss = best_val_loss_init
     best_metrics = None
-    for epoch in range(1, n_epochs + 1):
+    if start_epoch > n_epochs:
+        print(f"  [{phase_name}] 이미 완료된 phase — skip.")
+        return best_val_loss, best_metrics
+    for epoch in range(start_epoch, n_epochs + 1):
         t0 = time.time()
         train_m = train_one_epoch(model, train_loader, criterion,
                                   optimizer, device,
@@ -262,7 +349,20 @@ def train_phase(model, train_loader, val_loader, criterion, optimizer,
             print(f"    ★ best 저장 (val_loss={val_m['total']:.4f}, "
                   f"WT={val_m['dice_WT']:.3f})")
 
-        if early_stopping(val_m["total"]):
+        stop = early_stopping(val_m["total"])
+
+        # ── resume용 latest 체크포인트 (매 epoch) ──
+        if latest_path is not None and phase_id is not None:
+            save_latest_checkpoint(
+                latest_path,
+                phase=phase_id, epoch=epoch,
+                model=model, optimizer=optimizer, scheduler=scheduler,
+                history=history, best_val_loss=best_val_loss,
+                early_stopping=early_stopping,
+                swa_model=swa_model, swa_scheduler=swa_scheduler,
+            )
+
+        if stop:
             print(f"    ⚠ Early stop (patience={early_stopping.patience})")
             break
     return best_val_loss, best_metrics
@@ -353,19 +453,69 @@ def main():
     history.update({f"val_{k}": [] for k in keys_metric})
     history.update({"lr": [], "log_var_cls": [], "log_var_seg": []})
 
+    # ── resume 체크: latest 체크포인트가 있으면 자동으로 이어서 학습 ──
+    ckpt = load_latest_checkpoint(LATEST_CKPT, device)
+    resume_phase = 1
+    resume_epoch = 1                  # 다음에 실행할 epoch (1-based)
+    resume_best_p1 = float("inf")
+    resume_best_p2 = float("inf")
+    resume_payload = None
+    if ckpt is not None:
+        print(f"\n  ▶ resume: '{LATEST_CKPT.name}' 발견 → "
+              f"phase {ckpt['phase']}, epoch {ckpt['epoch']} 완료 지점에서 재개")
+        # 모델 가중치/uncertainty params 복원
+        model.load_state_dict(ckpt["model_state_dict"])
+        # history 복원
+        for k in history:
+            if k in ckpt["history"]:
+                history[k] = list(ckpt["history"][k])
+        resume_phase = int(ckpt["phase"])
+        finished_epoch = int(ckpt["epoch"])
+        # 해당 phase의 총 epoch 수
+        total_in_phase = (CONFIG["phase1_epochs"] if resume_phase == 1
+                          else CONFIG["phase2_epochs"])
+        if finished_epoch >= total_in_phase:
+            # 이 phase는 끝났음 → 다음 phase 1 epoch 부터
+            if resume_phase == 1:
+                resume_phase = 2
+                resume_epoch = 1
+            else:
+                resume_phase = 3   # 둘 다 끝 → 학습 본체 skip
+                resume_epoch = 1
+        else:
+            resume_epoch = finished_epoch + 1
+        if resume_phase == 2:
+            resume_best_p2 = float(ckpt.get("best_val_loss", float("inf")))
+        else:
+            resume_best_p1 = float(ckpt.get("best_val_loss", float("inf")))
+        resume_payload = ckpt
+    else:
+        print(f"\n  (resume 체크포인트 없음 → 처음부터 학습)")
+
     start_all = time.time()
 
-    # Phase 1
+    # ── Phase 1 ─────────────────────────────────────────────
     print(f"\n{'=' * 60}\n  Phase 1: encoder freeze\n{'=' * 60}")
     freeze_encoder(model)
     opt1 = AdamW(filter(lambda p: p.requires_grad, model.parameters()),
                  lr=CONFIG["phase1_lr"], weight_decay=CONFIG["weight_decay"])
     sch1 = CosineAnnealingLR(opt1, T_max=CONFIG["phase1_epochs"])
     es1 = EarlyStopping(patience=999)
-    train_phase(model, train_l, val_l, criterion, opt1, sch1, device,
-                CONFIG["phase1_epochs"], "Phase1", es1, history)
+    if resume_phase == 1 and resume_payload is not None:
+        opt1.load_state_dict(resume_payload["optimizer_state_dict"])
+        if resume_payload.get("scheduler_state_dict") is not None:
+            sch1.load_state_dict(resume_payload["scheduler_state_dict"])
+        es1.load_state_dict(resume_payload["early_stopping"])
+    if resume_phase <= 1:
+        train_phase(model, train_l, val_l, criterion, opt1, sch1, device,
+                    CONFIG["phase1_epochs"], "Phase1", es1, history,
+                    start_epoch=(resume_epoch if resume_phase == 1 else 1),
+                    best_val_loss_init=resume_best_p1,
+                    phase_id=1, latest_path=LATEST_CKPT)
+    else:
+        print(f"  Phase 1: 이미 완료된 상태 — skip.")
 
-    # Phase 2 + SWA
+    # ── Phase 2 + SWA ──────────────────────────────────────
     print(f"\n{'=' * 60}\n  Phase 2: full fine-tune + SWA\n{'=' * 60}")
     unfreeze_encoder(model)
     opt2 = AdamW(model.parameters(),
@@ -376,10 +526,32 @@ def main():
     swa_model = AveragedModel(model)
     swa_sch = SWALR(opt2, swa_lr=CONFIG["swa_lr"])
 
-    train_phase(model, train_l, val_l, criterion, opt2, sch2, device,
-                CONFIG["phase2_epochs"], "Phase2", es2, history,
-                swa_model=swa_model, swa_scheduler=swa_sch,
-                swa_start=CONFIG["swa_start_epoch"])
+    if resume_phase == 2 and resume_payload is not None:
+        opt2.load_state_dict(resume_payload["optimizer_state_dict"])
+        if resume_payload.get("scheduler_state_dict") is not None:
+            sch2.load_state_dict(resume_payload["scheduler_state_dict"])
+        es2.load_state_dict(resume_payload["early_stopping"])
+        if resume_payload.get("swa_model_state_dict") is not None:
+            try:
+                swa_model.load_state_dict(resume_payload["swa_model_state_dict"])
+            except Exception as e:
+                print(f"  [WARN] SWA model state 로드 실패 (무시): {e}")
+        if resume_payload.get("swa_scheduler_state_dict") is not None:
+            try:
+                swa_sch.load_state_dict(resume_payload["swa_scheduler_state_dict"])
+            except Exception as e:
+                print(f"  [WARN] SWA scheduler state 로드 실패 (무시): {e}")
+
+    if resume_phase <= 2:
+        train_phase(model, train_l, val_l, criterion, opt2, sch2, device,
+                    CONFIG["phase2_epochs"], "Phase2", es2, history,
+                    swa_model=swa_model, swa_scheduler=swa_sch,
+                    swa_start=CONFIG["swa_start_epoch"],
+                    start_epoch=(resume_epoch if resume_phase == 2 else 1),
+                    best_val_loss_init=resume_best_p2,
+                    phase_id=2, latest_path=LATEST_CKPT)
+    else:
+        print(f"  Phase 2: 이미 완료된 상태 — skip.")
 
     # SWA BN 업데이트
     print(f"\n  Updating BN statistics for SWA model ...")
@@ -420,6 +592,17 @@ def main():
     }
     with open(LOG_DIR / "sota_summary.json", "w", encoding="utf-8") as f:
         json.dump(summary, f, indent=2, ensure_ascii=False)
+
+    # 학습이 정상적으로 끝났으니 resume용 latest 체크포인트는 정리한다.
+    # (남겨두면 다음 실행에서 '학습 끝남' 상태로 인식되어 SWA가 빈 모델로
+    #  재시도되는 등의 부작용이 있을 수 있음. sota_best.pth / sota_last.pth /
+    #  sota_swa.pth 는 그대로 보존.)
+    try:
+        if LATEST_CKPT.exists():
+            LATEST_CKPT.unlink()
+            print(f"  resume 체크포인트 정리: {LATEST_CKPT.name} 삭제")
+    except Exception as e:
+        print(f"  [WARN] latest 체크포인트 삭제 실패 (무시): {e}")
 
 
 if __name__ == "__main__":
