@@ -439,7 +439,7 @@ A. *분류 head Grad-CAM의 IoU*만 보면 미세한 향상이다. 그러나 (1)
 
 ### 3.1 작업의 목적 (보존)
 
-> Day 5 MTL의 ROC-Youden 최적 임계값 **0.3847**은 그 모델의 *운용 지점*이고, Day 5의 F1 93.91 / FP 305 / FN 1136은 *그 threshold*에서 산출된 값이다. Day 6 MMMT의 기본 평가(step25)는 threshold=0.5에서 수행되었으므로, "멀티모달의 *순수* 효과"를 분리하려면 두 모델을 *같은 운용 지점*에서 비교해야 한다.
+> Day 5 MTL의 ROC-Youden(=Sensitivity + Specificity − 1) 최적 임계값 **0.3847**은 그 모델의 *운용 지점*이고, Day 5의 F1 93.91 / FP 305 / FN 1136은 *그 threshold*에서 산출된 값이다. Day 6 MMMT의 기본 평가(step25)는 threshold=0.5에서 수행되었으므로, "멀티모달의 *순수* 효과"를 분리하려면 두 모델을 *같은 운용 지점*에서 비교해야 한다.
 
 (`260523v1updatemmmt.md` §④ Phase 1 (A)에서 권장된 작업)
 
