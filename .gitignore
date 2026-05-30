@@ -2,7 +2,9 @@ data/
 processed/
 notPublic/
 outputs/checkpoints/
+outputs/logs/
 outputs/multitask/checkpoints/
 .env
 run.ipynb
 .pdf
+260528_presentation_design/
