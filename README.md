@@ -123,18 +123,6 @@ EDA       Whole     Grad-CAM    Patch      MTL        MMMT         SOTA Package
 ```
 biohealth_lv.1/
 ├── README.md                          ← (본 문서)
-├── 260527_final_presentation.md       ← 최종 발표 마스터 (Day 1~7 통합 + SOTA 비교)
-├── 260521v1result.md                  ← Day 1~6 진행 보고
-├── 260521v2ways.md                    ← 확장 로드맵 + SOTA §7 (14개 모델)
-├── 260524v1mmmtplus.md                ← Day 5~6 완성 + 권장 3종
-├── 260525v1sotapluswhy.md             ← sota 코드 해설
-├── 260525v2sotawith.md                ← 학술 SOTA 표 (MedNeXt/DynUNet/SwinUNETR)
-├── 260526v1fullresults.md             ← 성능 짜내기 9종
-├── 260526v2step31patch.md             ← P1~P10 패치 카탈로그
-├── 260526v3sotafinal.md               ← Day 7 SOTA 평가 통합
-├── brats2023_dataset_guide.md         데이터셋 가이드 (WT/TC/ET 라벨 정의)
-├── project_spec_ideaB.md              프로젝트 상세 명세
-├── organize_data.py                   원본 zip → BraTS-GLI/training 정리
 │
 ├── code/
 │   ├── whole/                         Day 1-3: Whole-Slice 파이프라인
